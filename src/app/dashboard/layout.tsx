@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { href: '/dashboard/websites', label: 'Websites', icon: <Layout size={20} /> },
     { href: '/dashboard/domains', label: 'Domains', icon: <Globe size={20} /> },
     { href: '/dashboard/leads', label: 'Leads', icon: <Inbox size={20} /> },
-    { href: '/dashboard/prompts', label: 'AI Prompts', icon: <FileText size={20} /> },
+    // { href: '/dashboard/prompts', label: 'AI Prompts', icon: <FileText size={20} /> },
   ];
 
   return (
