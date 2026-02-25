@@ -4,10 +4,29 @@ import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
-import { LogOut, Users, FileText, BarChart3, Shield, Globe, Inbox, Layout } from 'lucide-react';
+import Image from 'next/image';
+import {
+  LogOut,
+  BarChart3,
+  Users,
+  Layout,
+  Globe,
+  Inbox,
+  HardDrive,
+  ChevronRight,
+} from 'lucide-react';
+
+const navItems = [
+  { href: '/dashboard',          label: 'Overview',  icon: BarChart3  },
+  { href: '/dashboard/users',    label: 'Users',     icon: Users      },
+  { href: '/dashboard/websites', label: 'Websites',  icon: Layout     },
+  { href: '/dashboard/domains',  label: 'Domains',   icon: Globe      },
+  { href: '/dashboard/leads',    label: 'Leads',     icon: Inbox      },
+  { href: '/dashboard/storage',  label: 'Storage',   icon: HardDrive  },
+];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
+  const router   = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, logout, admin } = useAuthStore();
 
@@ -17,71 +36,103 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (!isAuthenticated()) return null;
 
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  };
-
-  const navItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: <BarChart3 size={20} /> },
-    { href: '/dashboard/users', label: 'Users', icon: <Users size={20} /> },
-    { href: '/dashboard/websites', label: 'Websites', icon: <Layout size={20} /> },
-    { href: '/dashboard/domains', label: 'Domains', icon: <Globe size={20} /> },
-    { href: '/dashboard/leads', label: 'Leads', icon: <Inbox size={20} /> },
-    // { href: '/dashboard/prompts', label: 'AI Prompts', icon: <FileText size={20} /> },
-  ];
+  const handleLogout = () => { logout(); router.push('/login'); };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <Shield className="w-8 h-8 text-indigo-600" />
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Admin Portal</h1>
-              <p className="text-xs text-gray-500">Domain CMS Management</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">{admin?.email}</p>
-              <p className="text-xs text-indigo-600 font-semibold">Super Admin</p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors text-sm font-medium"
-            >
-              <LogOut size={16} />
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* ── Sidebar ───────────────────────────────────────────── */}
+      <aside className="flex flex-col w-64 flex-shrink-0 bg-sidebar border-r border-sidebar-border">
 
-      <div className="flex">
-        <aside className="w-56 bg-white border-r border-gray-200 min-h-[calc(100vh-73px)] flex-shrink-0">
-          <nav className="p-3 space-y-1">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
+        {/* Logo */}
+        <div className="flex flex-col items-center gap-1 px-5 py-5 border-b border-sidebar-border">
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/img/logo.png"
+              alt="Fastofy logo"
+              width={100}
+              height={100}
+              className="flex-shrink-0"
+            />
+            <p className="text-2xl text-foreground" style={{ fontFamily: 'Arial, sans-serif' }}>
+              FASTOFY
+            </p>
+          </div>
+          <p className="text-[20px] text-muted-foreground tracking-widest uppercase">Admin</p>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+          {navItems.map(({ href, label, icon: Icon }) => {
+            const exact   = href === '/dashboard';
+            const isActive = exact ? pathname === href : pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`
+                  group flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-medium
+                  transition-colors duration-100
+                  ${isActive
+                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                    : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground'
+                  }
+                `}
+              >
+                <span className="flex items-center gap-2.5">
+                  <Icon
+                    size={16}
+                    className={isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'}
+                  />
+                  {label}
+                </span>
+                {isActive && <ChevronRight size={13} className="text-muted-foreground" />}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Footer – user info + logout */}
+        <div className="border-t border-sidebar-border px-4 py-4">
+          <div className="flex items-center gap-2.5 mb-2 px-1">
+            <div className="w-7 h-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-semibold text-primary">
+                {admin?.email?.[0]?.toUpperCase() ?? 'A'}
+              </span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-foreground truncate">{admin?.email}</p>
+              <p className="text-[10px] text-primary truncate">Super Admin</p>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-destructive-foreground hover:bg-destructive/20 transition-colors"
+          >
+            <LogOut size={15} />
+            Sign out
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Main content ──────────────────────────────────────── */}
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+        {/* Top bar */}
+        <header className="h-14 flex items-center px-6 border-b border-border bg-card flex-shrink-0">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            {navItems.map(({ href, label }) => {
+              const exact    = href === '/dashboard';
+              const isActive = exact ? pathname === href : pathname.startsWith(href);
+              if (!isActive) return null;
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-sm font-medium ${
-                    isActive
-                      ? 'bg-indigo-50 text-indigo-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
-                >
-                  <span className={isActive ? 'text-indigo-600' : 'text-gray-400'}>{item.icon}</span>
-                  {item.label}
-                </Link>
+                <span key={href} className="text-foreground font-medium">{label}</span>
               );
             })}
-          </nav>
-        </aside>
+          </div>
+        </header>
 
-        <main className="flex-1 p-8 min-w-0">{children}</main>
+        <main className="flex-1 overflow-y-auto p-6">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -4,32 +4,27 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { adminAPI } from '@/lib/api';
-import { Shield } from 'lucide-react';
+import { Shield, Loader2, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
-  const router = useRouter();
-  const setAuth = useAuthStore((state) => state.setAuth);
-  const [email, setEmail] = useState('');
+  const router   = useRouter();
+  const setAuth  = useAuthStore((state) => state.setAuth);
+  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError]       = useState('');
+  const [loading, setLoading]   = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       const response = await adminAPI.login(email, password);
       const { user, token } = response.data;
-
-      // Check if user is super admin
       if (user.role !== 'SUPER_ADMIN') {
         setError('Access denied. Super Admin privileges required.');
-        setLoading(false);
         return;
       }
-
       setAuth(user, token);
       router.push('/dashboard');
     } catch (err: any) {
@@ -40,42 +35,53 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-600 to-primary-800">
-      <div className="max-w-md w-full mx-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      {/* Subtle grid background */}
+      <div
+        className="fixed inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: 'linear-gradient(oklch(0.8 0.13 160) 1px, transparent 1px), linear-gradient(90deg, oklch(0.8 0.13 160) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
+      />
+
+      <div className="relative w-full max-w-sm">
+        {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4">
-            <Shield className="w-8 h-8 text-primary-600" />
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/15 border border-primary/25 mb-4">
+            <Shield size={22} className="text-primary" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
-          <p className="text-primary-100">Domain CMS Management</p>
+          <h1 className="text-2xl font-semibold text-foreground">Admin Portal</h1>
+          <p className="text-sm text-muted-foreground mt-1">Sign in to your admin account</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          <h2 className="text-2xl font-bold text-center mb-6">Admin Login</h2>
-
+        {/* Card */}
+        <div className="bg-card border border-border rounded-xl p-6 shadow-xl">
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm">
-              {error}
+            <div className="flex items-center gap-2 bg-destructive/10 border border-destructive/20 text-destructive-foreground px-3 py-2.5 rounded-lg mb-4 text-sm">
+              <AlertCircle size={14} className="text-red-400 flex-shrink-0" />
+              <span className="text-red-400">{error}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Admin Email
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+                Email
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input-field"
-                placeholder="admin@cms.com"
+                placeholder="admin@example.com"
                 required
+                autoFocus
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5">
                 Password
               </label>
               <input
@@ -83,7 +89,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field"
-                placeholder="Enter password"
+                placeholder="••••••••"
                 required
               />
             </div>
@@ -91,20 +97,17 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full btn-primary"
+              className="btn-primary w-full justify-center py-2.5"
             >
-              {loading ? 'Logging in...' : 'Login as Admin'}
+              {loading ? <Loader2 size={15} className="animate-spin" /> : 'Sign in'}
             </button>
           </form>
-
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600 text-center">
-              This portal is restricted to Super Admin users only.
-            </p>
-          </div>
         </div>
+
+        <p className="text-center text-xs text-muted-foreground/60 mt-4">
+          Restricted to Super Admin users only
+        </p>
       </div>
     </div>
   );
 }
-

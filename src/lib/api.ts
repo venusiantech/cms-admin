@@ -58,4 +58,11 @@ export const adminAPI = {
   // ── Leads ─────────────────────────────────────────────────────────────────
   getAllLeads: () => api.get('/admin/leads'),
   deleteLead: (id: string) => api.delete(`/admin/leads/${id}`),
+
+  // ── Storage ───────────────────────────────────────────────────────────────
+  getStorageOverview: () => api.get('/admin/storage'),
+  getWebsiteStorage: (websiteId: string) => api.get(`/admin/storage/${websiteId}`),
+  deleteBlogSection: (sectionId: string) => api.delete(`/admin/storage/section/${sectionId}`),
+  deleteBlock: (blockId: string) => api.delete(`/admin/storage/block/${blockId}`),
+  deleteAllWebsiteContent: (websiteId: string) => api.delete(`/admin/storage/${websiteId}/all-content`),
 };
