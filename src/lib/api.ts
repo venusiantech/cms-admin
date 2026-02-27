@@ -65,4 +65,9 @@ export const adminAPI = {
   deleteBlogSection: (sectionId: string) => api.delete(`/admin/storage/section/${sectionId}`),
   deleteBlock: (blockId: string) => api.delete(`/admin/storage/block/${blockId}`),
   deleteAllWebsiteContent: (websiteId: string) => api.delete(`/admin/storage/${websiteId}/all-content`),
+
+  // ── Storage Provider ─────────────────────────────────────────────────────
+  getStorageProvider: () => api.get<{ provider: 'railway' | 'cloudinary' }>('/admin/storage-provider'),
+  setStorageProvider: (provider: 'railway' | 'cloudinary') =>
+    api.put<{ provider: 'railway' | 'cloudinary' }>('/admin/storage-provider', { provider }),
 };

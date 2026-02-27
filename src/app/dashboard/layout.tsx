@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
@@ -14,16 +14,87 @@ import {
   Inbox,
   HardDrive,
   ChevronRight,
+  ChevronDown,
 } from 'lucide-react';
 
-const navItems = [
+const navLinks: { href: string; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
   { href: '/dashboard',          label: 'Overview',  icon: BarChart3  },
   { href: '/dashboard/users',    label: 'Users',     icon: Users      },
   { href: '/dashboard/websites', label: 'Websites',  icon: Layout     },
   { href: '/dashboard/domains',  label: 'Domains',   icon: Globe      },
   { href: '/dashboard/leads',    label: 'Leads',     icon: Inbox      },
-  { href: '/dashboard/storage',  label: 'Storage',   icon: HardDrive  },
 ];
+
+const storageDropdown = {
+  label: 'Storage',
+  icon: HardDrive,
+  children: [
+    { href: '/dashboard/storage/provider', label: 'Provider' },
+    { href: '/dashboard/storage', label: 'Websites Storage' },
+  ],
+};
+
+function StorageNavDropdown({ pathname }: { pathname: string }) {
+  const isStorageActive = pathname.startsWith('/dashboard/storage');
+  const [open, setOpen] = useState(isStorageActive);
+
+  // Keep dropdown open when on a storage sub-route
+  const isOpen = open || isStorageActive;
+  const Icon = storageDropdown.icon;
+
+  return (
+    <div className="space-y-0.5">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={`
+          w-full group flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-medium
+          transition-colors duration-100
+          ${isStorageActive
+            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+            : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground'
+          }
+        `}
+      >
+        <span className="flex items-center gap-2.5">
+          <Icon
+            size={16}
+            className={isStorageActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'}
+          />
+          {storageDropdown.label}
+        </span>
+        <ChevronDown
+          size={14}
+          className={`text-muted-foreground transition-transform ${isOpen ? 'rotate-0' : '-rotate-90'}`}
+        />
+      </button>
+      {isOpen && (
+        <div className="pl-4 ml-2 border-l border-sidebar-border space-y-0.5">
+          {storageDropdown.children.map(({ href, label }) => {
+            const exact = href === '/dashboard/storage';
+            const isActive = exact ? pathname === href : pathname.startsWith(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={`
+                  flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors
+                  ${isActive
+                    ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                    : 'text-sidebar-foreground/80 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground'
+                  }
+                `}
+              >
+                {label}
+                {isActive && <ChevronRight size={12} className="text-muted-foreground ml-auto" />}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router   = useRouter();
@@ -62,8 +133,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Nav */}
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          {navItems.map(({ href, label, icon: Icon }) => {
-            const exact   = href === '/dashboard';
+          {navLinks.map(({ href, label, icon: Icon }) => {
+            const exact = href === '/dashboard';
             const isActive = exact ? pathname === href : pathname.startsWith(href);
             return (
               <Link
@@ -89,6 +160,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </Link>
             );
           })}
+
+          {/* Storage dropdown */}
+          <StorageNavDropdown pathname={pathname} />
         </nav>
 
         {/* Footer – user info + logout */}
@@ -119,14 +193,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Top bar */}
         <header className="h-14 flex items-center px-6 border-b border-border bg-card flex-shrink-0">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            {navItems.map(({ href, label }) => {
-              const exact    = href === '/dashboard';
+            {navLinks.map(({ href, label }) => {
+              const exact = href === '/dashboard';
               const isActive = exact ? pathname === href : pathname.startsWith(href);
               if (!isActive) return null;
               return (
                 <span key={href} className="text-foreground font-medium">{label}</span>
               );
             })}
+            {pathname.startsWith('/dashboard/storage') && (
+              <span className="text-foreground font-medium">
+                {pathname === '/dashboard/storage/provider' ? 'Storage › Provider' : 'Storage › Websites Storage'}
+              </span>
+            )}
           </div>
         </header>
 
