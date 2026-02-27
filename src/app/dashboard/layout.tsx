@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
 import Image from 'next/image';
+import type { LucideIcon } from 'lucide-react';
 import {
   LogOut,
   BarChart3,
@@ -17,7 +18,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 
-const navLinks: { href: string; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
+const navLinks: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/dashboard',          label: 'Overview',  icon: BarChart3  },
   { href: '/dashboard/users',    label: 'Users',     icon: Users      },
   { href: '/dashboard/websites', label: 'Websites',  icon: Layout     },
