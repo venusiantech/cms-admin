@@ -14,6 +14,7 @@ import {
   Globe,
   Inbox,
   HardDrive,
+  Bot,
   ChevronRight,
   ChevronDown,
 } from 'lucide-react';
@@ -24,6 +25,7 @@ const navLinks: { href: string; label: string; icon: LucideIcon }[] = [
   { href: '/dashboard/websites', label: 'Websites',  icon: Layout     },
   { href: '/dashboard/domains',  label: 'Domains',   icon: Globe      },
   { href: '/dashboard/leads',    label: 'Leads',     icon: Inbox      },
+  { href: '/dashboard/ai-provider', label: 'AI Providers', icon: Bot },
 ];
 
 const storageDropdown = {
@@ -206,6 +208,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <span className="text-foreground font-medium">
                 {pathname === '/dashboard/storage/provider' ? 'Storage › Provider' : 'Storage › Websites Storage'}
               </span>
+            )}
+            {pathname.startsWith('/dashboard/ai-provider') && (
+              <span className="text-foreground font-medium">AI Providers</span>
             )}
           </div>
         </header>

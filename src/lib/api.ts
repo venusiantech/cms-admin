@@ -70,4 +70,27 @@ export const adminAPI = {
   getStorageProvider: () => api.get<{ provider: 'railway' | 'cloudinary' }>('/admin/storage-provider'),
   setStorageProvider: (provider: 'railway' | 'cloudinary') =>
     api.put<{ provider: 'railway' | 'cloudinary' }>('/admin/storage-provider', { provider }),
+
+  // ── AI Provider ──────────────────────────────────────────────────────────
+  getAiProviders: () =>
+    api.get<{ title: 'aaddyy' | 'gemini'; blog: 'aaddyy' | 'gemini'; image: 'aaddyy' | 'gemini' }>(
+      '/admin/ai-provider'
+    ),
+  setAiProvider: (task: 'title' | 'blog' | 'image', provider: 'aaddyy' | 'gemini') =>
+    api.put<{ title: 'aaddyy' | 'gemini'; blog: 'aaddyy' | 'gemini'; image: 'aaddyy' | 'gemini' }>(
+      '/admin/ai-provider',
+      { task, provider }
+    ),
+
+  // ── Gemini Model ──────────────────────────────────────────────────────────
+  getGeminiModel: () =>
+    api.get<{
+      current: string;
+      models: { id: string; label: string; bestFor: string; quota: string }[];
+    }>('/admin/ai-provider/gemini-model'),
+  setGeminiModel: (model: string) =>
+    api.put<{
+      current: string;
+      models: { id: string; label: string; bestFor: string; quota: string }[];
+    }>('/admin/ai-provider/gemini-model', { model }),
 };
