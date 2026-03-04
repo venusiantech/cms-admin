@@ -111,7 +111,7 @@ function ProviderRow({
         ${!isSelectable ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}
       `}
     >
-      <div className={`relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 ring-2 transition-all ${isActive ? `${m.ringClass} shadow-md ${m.glowClass}` : 'ring-white/10'}`}>
+      <div className={`relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 ring-2 transition-all bg-white ${isActive ? `${m.ringClass} shadow-md ${m.glowClass}` : 'ring-white/10'}`}>
         <Image src={m.logo} alt={m.label} fill className="object-fill" sizes="64px" />
       </div>
       <div className="flex-1 text-left min-w-0">
