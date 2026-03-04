@@ -7,7 +7,7 @@ import { Bot, Type, FileText, ImageIcon, Check, Loader2, Cpu } from 'lucide-reac
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 
-type AiProvider = 'aaddyy' | 'gemini';
+type AiProvider = 'aaddyy' | 'gemini' | 'pexels';
 type AiProviderTask = 'title' | 'blog' | 'image';
 type Providers = Record<AiProviderTask, AiProvider>;
 
@@ -57,6 +57,14 @@ const PROVIDER_META: Record<AiProvider, ProviderMeta> = {
     ringClass: 'ring-violet-500/50',
     glowClass: 'shadow-violet-500/20',
   },
+  pexels: {
+    label: 'Pexels',
+    tagline: 'Real photos · Free stock imagery',
+    logo: '/img/pexels.png',
+    accentClass: 'text-green-400',
+    ringClass: 'ring-green-500/50',
+    glowClass: 'shadow-green-500/20',
+  },
 };
 
 const TASK_CONFIGS: TaskConfig[] = [
@@ -79,7 +87,7 @@ const TASK_CONFIGS: TaskConfig[] = [
     label: 'Image Generation',
     description: 'Creates featured images for blog posts.',
     icon: <ImageIcon size={14} />,
-    availableProviders: ['aaddyy'],
+    availableProviders: ['aaddyy', 'pexels'],
   },
 ];
 
@@ -293,14 +301,15 @@ export default function AiProviderPage() {
           </p>
         </div>
       </div>
-      {/* <div className="rounded-xl border border-white/8 bg-muted/20 px-5 py-4 text-xs text-muted-foreground space-y-2">
+      <div className="rounded-xl border border-white/8 bg-muted/20 px-5 py-4 text-xs text-muted-foreground space-y-2">
         <p className="font-semibold text-foreground text-sm">Required environment variables</p>
         <div className="flex flex-wrap gap-x-8 gap-y-1">
           <span><span className="text-sky-400 font-medium">Aaddyy</span> → <code className="bg-muted px-1.5 py-0.5 rounded text-[11px]">AADDYY_API_KEY</code></span>
           <span><span className="text-violet-400 font-medium">Google Gemini</span> → <code className="bg-muted px-1.5 py-0.5 rounded text-[11px]">GEMINI_API_KEY</code></span>
+          <span><span className="text-green-400 font-medium">Pexels</span> → <code className="bg-muted px-1.5 py-0.5 rounded text-[11px]">PEXELS_API_KEY</code></span>
         </div>
         <p className="text-muted-foreground/50">All selections are persisted in the database — no server restart required.</p>
-      </div> */}
+      </div>
 
       {isLoading ? (
         <div className="flex items-center gap-2 text-sm text-muted-foreground py-12">

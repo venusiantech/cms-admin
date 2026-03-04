@@ -73,11 +73,11 @@ export const adminAPI = {
 
   // ── AI Provider ──────────────────────────────────────────────────────────
   getAiProviders: () =>
-    api.get<{ title: 'aaddyy' | 'gemini'; blog: 'aaddyy' | 'gemini'; image: 'aaddyy' | 'gemini' }>(
+    api.get<{ title: 'aaddyy' | 'gemini' | 'pexels'; blog: 'aaddyy' | 'gemini' | 'pexels'; image: 'aaddyy' | 'gemini' | 'pexels' }>(
       '/admin/ai-provider'
     ),
-  setAiProvider: (task: 'title' | 'blog' | 'image', provider: 'aaddyy' | 'gemini') =>
-    api.put<{ title: 'aaddyy' | 'gemini'; blog: 'aaddyy' | 'gemini'; image: 'aaddyy' | 'gemini' }>(
+  setAiProvider: (task: 'title' | 'blog' | 'image', provider: 'aaddyy' | 'gemini' | 'pexels') =>
+    api.put<{ title: 'aaddyy' | 'gemini' | 'pexels'; blog: 'aaddyy' | 'gemini' | 'pexels'; image: 'aaddyy' | 'gemini' | 'pexels' }>(
       '/admin/ai-provider',
       { task, provider }
     ),
